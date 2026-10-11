@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Nasrallah Bake House</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="admin-styles.css">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-bread-slice"></i>
+                <h2>Bakery Admin</h2>
+            </div>
+            <nav class="sidebar-menu">
+                <a href="#" onclick="showTab('dashboard')" class="menu-item active">
+                    <i class="fas fa-chart-line"></i> Dashboard
+                </a>
+                <a href="#" onclick="showTab('products')" class="menu-item">
+                    <i class="fas fa-boxes"></i> Products
+                </a>
+                <a href="#" onclick="showTab('inventory')" class="menu-item">
+                    <i class="fas fa-layer-group"></i> Inventory
+                </a>
+                <a href="#" onclick="showTab('orders')" class="menu-item">
+                    <i class="fas fa-shopping-cart"></i> Orders
+                </a>
+                <a href="#" onclick="showTab('customers')" class="menu-item">
+                    <i class="fas fa-users"></i> Customers
+                </a>
+                <a href="#" onclick="showTab('sales')" class="menu-item">
+                    <i class="fas fa-chart-bar"></i> Sales Report
+                </a>
+                <a href="index.html" class="menu-item">
+                    <i class="fas fa-arrow-left"></i> Back to Website
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="admin-header">
+                <h1>Nasrallah Bake House - Management System</h1>
+                <div class="header-actions">
+                    <span class="date-time" id="dateTime"></span>
+                    <button class="btn btn-secondary" onclick="exportData()">
+                        <i class="fas fa-download"></i> Export Data
+                    </button>
+                </div>
+            </header>
+
+            <!-- Dashboard Tab -->
+            <section id="dashboard" class="tab-content active">
+                <div class="dashboard-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon sales">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Total Sales</h3>
+                            <p class="stat-value" id="totalSales">L.L 0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon orders">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Total Orders</h3>
+                            <p class="stat-value" id="totalOrders">0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon products">
+                            <i class="fas fa-box"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Products</h3>
+                            <p class="stat-value" id="totalProducts">0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon customers">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Customers</h3>
+                            <p class="stat-value" id="totalCustomers">0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-charts">
+                    <div class="chart-container">
+                        <h3>Daily Sales</h3>
+                        <canvas id="salesChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h3>Top Products</h3>
+                        <div id="topProducts" class="top-products-list"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Products Tab -->
+            <section id="products" class="tab-content">
+                <div class="section-header">
+                    <h2>Product Management</h2>
+                    <button class="btn btn-primary" onclick="openProductForm()">
+                        <i class="fas fa-plus"></i> Add Product
+                    </button>
+                </div>
+
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Product Name</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Description</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productsTableBody">
+                        <!-- Products will be populated here -->
+                    </tbody>
+                </table>
+
+                <!-- Product Form Modal -->
+                <div id="productModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeProductForm()">&times;</span>
+                        <h2>Add/Edit Product</h2>
+                        <form id="productForm">
+                            <input type="hidden" id="productId">
+                            <input type="text" placeholder="Product Name" id="productName" required>
+                            <select id="productCategory" required>
+                                <option value="">Select Category</option>
+                                <option value="pastries">Pastries</option>
+                                <option value="breads">Breads</option>
+                                <option value="breakfast">Breakfast Items</option>
+                            </select>
+                            <input type="number" placeholder="Price (L.L)" id="productPrice" step="500" required>
+                            <textarea placeholder="Description" id="productDescription" required></textarea>
+                            <button type="submit" class="btn btn-primary">Save Product</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Inventory Tab -->
+            <section id="inventory" class="tab-content">
+                <div class="section-header">
+                    <h2>Inventory Management</h2>
+                </div>
+
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Current Stock</th>
+                            <th>Reorder Level</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventoryTableBody">
+                        <!-- Inventory will be populated here -->
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- Orders Tab -->
+            <section id="orders" class="tab-content">
+                <div class="section-header">
+                    <h2>Order Management</h2>
+                    <button class="btn btn-primary" onclick="openOrderForm()">
+                        <i class="fas fa-plus"></i> New Order
+                    </button>
+                </div>
+
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Items</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ordersTableBody">
+                        <!-- Orders will be populated here -->
+                    </tbody>
+                </table>
+
+                <!-- Order Form Modal -->
+                <div id="orderModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeOrderForm()">&times;</span>
+                        <h2>Create New Order</h2>
+                        <form id="orderForm">
+                            <input type="text" placeholder="Customer Name" id="orderCustomer" required>
+                            <input type="email" placeholder="Customer Email" id="orderEmail" required>
+                            <input type="tel" placeholder="Customer Phone" id="orderPhone" required>
+                            <div id="orderItems">
+                                <div class="order-item">
+                                    <select class="order-product" required>
+                                        <option value="">Select Product</option>
+                                    </select>
+                                    <input type="number" placeholder="Qty" class="order-qty" value="1" min="1" required>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-secondary" onclick="addOrderItem()">
+                                <i class="fas fa-plus"></i> Add Item
+                            </button>
+                            <div class="order-total">
+                                <strong>Total: <span id="orderTotal">L.L 0</span></strong>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Create Order</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Customers Tab -->
+            <section id="customers" class="tab-content">
+                <div class="section-header">
+                    <h2>Customer Management</h2>
+                    <button class="btn btn-primary" onclick="openCustomerForm()">
+                        <i class="fas fa-plus"></i> Add Customer
+                    </button>
+                </div>
+
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Total Orders</th>
+                            <th>Total Spent</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="customersTableBody">
+                        <!-- Customers will be populated here -->
+                    </tbody>
+                </table>
+
+                <!-- Customer Form Modal -->
+                <div id="customerModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeCustomerForm()">&times;</span>
+                        <h2>Add/Edit Customer</h2>
+                        <form id="customerForm">
+                            <input type="hidden" id="customerId">
+                            <input type="text" placeholder="Full Name" id="customerName" required>
+                            <input type="email" placeholder="Email" id="customerEmail" required>
+                            <input type="tel" placeholder="Phone" id="customerPhone" required>
+                            <textarea placeholder="Address" id="customerAddress"></textarea>
+                            <button type="submit" class="btn btn-primary">Save Customer</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sales Report Tab -->
+            <section id="sales" class="tab-content">
+                <div class="section-header">
+                    <h2>Sales Report</h2>
+                    <div class="report-filters">
+                        <input type="date" id="startDate">
+                        <input type="date" id="endDate">
+                        <button class="btn btn-secondary" onclick="generateReport()">Generate Report</button>
+                    </div>
+                </div>
+
+                <div class="report-summary">
+                    <div class="report-card">
+                        <h3>Total Revenue</h3>
+                        <p class="report-value" id="reportRevenue">L.L 0</p>
+                    </div>
+                    <div class="report-card">
+                        <h3>Total Orders</h3>
+                        <p class="report-value" id="reportOrderCount">0</p>
+                    </div>
+                    <div class="report-card">
+                        <h3>Average Order Value</h3>
+                        <p class="report-value" id="reportAvgOrder">L.L 0</p>
+                    </div>
+                </div>
+
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Orders</th>
+                            <th>Revenue</th>
+                            <th>Avg Order Value</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reportTableBody">
+                        <!-- Report data will be populated here -->
+                    </tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+
+    <script src="admin-script.js"></script>
+</body>
+</html>
